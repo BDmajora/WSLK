@@ -58,7 +58,6 @@
         <y>__TASKBAR_Y__</y>
       </position>
     </application>
-
     <application class="explorer.exe">
       <decor>no</decor>
       <layer>above</layer>
@@ -68,10 +67,8 @@
         <y>__TASKBAR_Y__</y>
       </position>
     </application>
-
     <application class="*">
       <decor>no</decor>
     </application>
   </applications>
-
 </openbox_config>

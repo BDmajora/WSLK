@@ -1,34 +1,51 @@
 #!/bin/bash
 
-# Get output name and current resolution dynamically
+# 1. WAIT FOR REAL DATA
+# We loop until wlr-randr actually gives us a real resolution.
+# This prevents the script from defaulting to 800px and putting the bar in the middle.
+RES=""
+while [ -z "$RES" ]; do
+    RES=$(wlr-randr 2>/dev/null | awk '/preferred, current/ {print $1; exit}')
+    [ -z "$RES" ] && sleep 0.1
+done
+
 OUTPUT=$(wlr-randr 2>/dev/null | awk '/^[A-Za-z]/ {name=$1} /preferred, current/ {print name; exit}')
-RES=$(wlr-randr 2>/dev/null | awk '/preferred, current/ {print $1; exit}')
-
-[ -z "$OUTPUT" ] && OUTPUT="Virtual-1"
-[ -z "$RES" ] && RES="1280x800"
-
 WIDTH=$(echo "$RES" | cut -dx -f1)
 HEIGHT=$(echo "$RES" | cut -dx -f2)
-TASKBAR_H=30
+
+# 2. DYNAMIC MATH
+# Now that we KNOW the real height, we calculate the Y coordinate.
+TASKBAR_H=28
 TASKBAR_Y=$((HEIGHT - TASKBAR_H))
 
-# Force the mode so QEMU doesn't scale/double
+# 3. UPDATE RC.XML AT RUNTIME
+# We inject these real numbers into your config file so Labwc knows the plan.
+CONFIG_FILE="$HOME/.config/labwc/rc.xml"
+if [ -f "$CONFIG_FILE" ]; then
+    # Update the Y coordinate in the window rules
+    sed -i "s/y=\"[^\"]*\"/y=\"$TASKBAR_Y\"/g" "$CONFIG_FILE"
+    # Update the output name
+    sed -i "s/<name>.*<\/name>/<name>$OUTPUT<\/name>/g" "$CONFIG_FILE"
+    
+    # Tell Labwc to reload the config and snap the taskbar to the bottom
+    labwc --reconfigure
+fi
+
+# 4. STARTUP LOGS & SERVICES
+echo "Fixed Resolution: ${WIDTH}x${HEIGHT} | Taskbar Y: $TASKBAR_Y" >> /tmp/wslk_autostart.log
+
+# Force the mode so QEMU doesn't scale
 wlr-randr --output "$OUTPUT" --mode "$RES" >> /tmp/wslk_autostart.log 2>&1
 
 # Apply Wine registry fixes
 if [ -f "$HOME/.wslk_prefs.reg" ]; then
-    WINEPREFIX="$HOME/.wine" \
-    WINEWAYLAND=1 \
-    DISPLAY="" \
+    WINEPREFIX="$HOME/.wine" WINEWAYLAND=1 DISPLAY="" \
     wine regedit /s "$HOME/.wslk_prefs.reg" >> /tmp/wslk_autostart.log 2>&1
 fi
 
 swaybg -c "#366ea5" &
 
-sleep 1
-
-echo "Output: $OUTPUT, Resolution: ${WIDTH}x${HEIGHT}, taskbar Y: $TASKBAR_Y" >> /tmp/wslk_autostart.log
-
+# 5. LAUNCH EXPLORER
 WINEPREFIX="$HOME/.wine" \
 WINEWAYLAND=1 \
 DISPLAY="" \

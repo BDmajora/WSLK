@@ -40,19 +40,13 @@
     <windowRule identifier="Shell_TrayWnd" serverDecoration="no" skipTaskbar="yes" skipPager="yes">
       <action name="MoveTo" x="0" y="__TASKBAR_Y__" />
     </windowRule>
-    <windowRule identifier="explorer.exe" serverDecoration="no" skipTaskbar="yes" skipPager="yes">
-      <action name="MoveTo" x="0" y="__TASKBAR_Y__" />
-    </windowRule>
-    <windowRule identifier="wine" serverDecoration="no" skipTaskbar="yes" skipPager="yes">
-      <action name="MoveTo" x="0" y="__TASKBAR_Y__" />
-    </windowRule>
+    <windowRule identifier="explorer.exe" serverDecoration="no" skipTaskbar="yes" skipPager="yes" />
   </windowRules>
 
   <applications>
     <application class="Shell_TrayWnd">
       <decor>no</decor>
       <layer>above</layer>
-      <focus>no</focus>
       <position force="yes">
         <x>0</x>
         <y>__TASKBAR_Y__</y>
@@ -60,15 +54,10 @@
     </application>
     <application class="explorer.exe">
       <decor>no</decor>
-      <layer>above</layer>
-      <focus>no</focus>
       <position force="yes">
         <x>0</x>
-        <y>__TASKBAR_Y__</y>
+        <y>0</y>
       </position>
-    </application>
-    <application class="*">
-      <decor>no</decor>
     </application>
   </applications>
 </openbox_config>

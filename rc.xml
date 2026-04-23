@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<openbox_config xmlns="http://openbox.org/3.4/rc"
-                xmlns:xi="http://www.w3.org/2001/XInclude">
-
+<openbox_config xmlns="http://openbox.org/3.4/rc">
   <outputs>
     <output>
       <name>__OUTPUT__</name>
@@ -9,38 +7,19 @@
     </output>
   </outputs>
 
-  <focus>
-    <followMouse>no</followMouse>
-    <focusLast>yes</focusLast>
-    <underMouse>no</underMouse>
-    <focusDelay>200</focusDelay>
-  </focus>
-
   <desktops>
     <number>1</number>
-    <firstdesk>1</firstdesk>
     <names><name>WSLK</name></names>
   </desktops>
-
-  <keyboard>
-    <keybind key="W-t">
-      <action name="Execute"><command>foot</command></action>
-    </keybind>
-    <keybind key="W-S-q">
-      <action name="Exit"/>
-    </keybind>
-  </keyboard>
-
-  <mouse>
-    <dragThreshold>1</dragThreshold>
-    <doubleClickTime>500</doubleClickTime>
-  </mouse>
 
   <windowRules>
     <windowRule identifier="Shell_TrayWnd" serverDecoration="no" skipTaskbar="yes" skipPager="yes">
       <action name="MoveTo" x="0" y="__TASKBAR_Y__" />
     </windowRule>
+    
     <windowRule identifier="explorer.exe" serverDecoration="no" skipTaskbar="yes" skipPager="yes" />
+    
+    <windowRule identifier="wine" serverDecoration="no" />
   </windowRules>
 
   <applications>
@@ -58,6 +37,9 @@
         <x>0</x>
         <y>0</y>
       </position>
+    </application>
+    <application class="*">
+      <decor>no</decor>
     </application>
   </applications>
 </openbox_config>

@@ -6,8 +6,7 @@ fi
 
 echo "Installing dependencies..."
 apt update
-# Ensure wlr-randr and sed are present for the autostart logic
-apt install -y wlr-randr sed
+apt install -y wlr-randr sed swaybg wine
 
 REAL_USER=${SUDO_USER:-$USER}
 USER_HOME=$(getent passwd "$REAL_USER" | cut -d: -f6)
@@ -21,17 +20,14 @@ if [ -f "wslk_prefs.reg" ]; then
     chown "$REAL_USER:$REAL_USER" "$USER_HOME/.wslk_prefs.reg"
 fi
 
-# THE REAL NO-HARDCODE FIX: Just deploy the template
-# We stop doing math here because sudo/setup environment doesn't know the resolution yet.
+# Deploy rc.xml Template (No math here!)
 if [ -f "rc.xml" ]; then
-    echo "Deploying rc.xml template..."
     cp rc.xml "$CONFIG_DIR/rc.xml"
     chown "$REAL_USER:$REAL_USER" "$CONFIG_DIR/rc.xml"
 fi
 
 # Deploy Autostart
 if [ -f "labwc_autostart" ]; then
-    echo "Deploying autostart script..."
     cp labwc_autostart "$CONFIG_DIR/autostart"
     chmod +x "$CONFIG_DIR/autostart"
     chown "$REAL_USER:$REAL_USER" "$CONFIG_DIR/autostart"

@@ -37,25 +37,25 @@
   </mouse>
 
   <windowRules>
-    <windowRule identifier="Shell_TrayWnd"
+    <windowRule identifier="explorer.exe"
                 serverDecoration="no"
                 skipTaskbar="yes"
                 skipPager="yes"
                 fixedPosition="yes">
-      <action name="MoveTo" x="0" y="-30" />
     </windowRule>
   </windowRules>
 
   <applications>
-    <application class="explorer.exe" role="Shell_TrayWnd">
+    <application class="explorer.exe">
       <decor>no</decor>
       <layer>above</layer>
       <focus>no</focus>
       <position force="yes">
         <x>0</x>
-        <y>-30</y>
+        <y>-0</y>
       </position>
     </application>
+    
     <application class="*">
       <decor>no</decor>
     </application>

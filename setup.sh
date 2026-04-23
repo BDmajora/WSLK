@@ -18,12 +18,10 @@ if [ -f "wslk_prefs.reg" ]; then
     echo "Staging registry file..."
     cp wslk_prefs.reg "$USER_HOME/.wslk_prefs.reg"
     chown "$REAL_USER:$REAL_USER" "$USER_HOME/.wslk_prefs.reg"
-else
-    echo "Warning: wslk_prefs.reg not found. Skipping."
 fi
 
 if [ -f "rc.xml" ]; then
-    echo "Configuring labwc with dynamic coordinates..."
+    echo "Configuring labwc with precision coordinates..."
     
     # Detect output and resolution
     OUTPUT=$(wlr-randr 2>/dev/null | awk '/^[A-Za-z]/ {name=$1} /preferred, current/ {print name; exit}')
@@ -32,11 +30,11 @@ if [ -f "rc.xml" ]; then
     [ -z "$OUTPUT" ] && OUTPUT="Virtual-1"
     [ -z "$RES" ] && RES="1280x800"
 
-    # Calculate Y coordinate (Screen Height - 30px taskbar)
+    # Precise Math: Wine taskbar is 28px. 
+    # Height (800) - 28 = 772. This closes the gap seen in image_0b7c3b.png
     HEIGHT=$(echo "$RES" | cut -dx -f2)
-    TASKBAR_Y=$((HEIGHT - 30))
+    TASKBAR_Y=$((HEIGHT - 28))
 
-    # Inject BOTH the output name and the calculated Y position
     sed -e "s/__OUTPUT__/${OUTPUT}/g" \
         -e "s/__TASKBAR_Y__/${TASKBAR_Y}/g" \
         rc.xml > "$CONFIG_DIR/rc.xml"
@@ -49,8 +47,6 @@ if [ -f "labwc_autostart" ]; then
     cp labwc_autostart "$CONFIG_DIR/autostart"
     chmod +x "$CONFIG_DIR/autostart"
     chown "$REAL_USER:$REAL_USER" "$CONFIG_DIR/autostart"
-else
-    echo "Warning: labwc_autostart not found. Skipping."
 fi
 
 echo "WSLK setup complete. Launch with: labwc"

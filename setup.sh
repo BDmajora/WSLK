@@ -20,29 +20,9 @@ if [ -f "wslk_prefs.reg" ]; then
     chown "$REAL_USER:$REAL_USER" "$USER_HOME/.wslk_prefs.reg"
 fi
 
-# THE NO-HARDCODE FIX
+# The REAL no-hardcode fix: Just copy the XML!
 if [ -f "rc.xml" ]; then
-    echo "Calculating dynamic display coordinates..."
-    
-    # 1. Scrape current output and resolution
-    OUTPUT=$(wlr-randr 2>/dev/null | awk '/^[A-Za-z]/ {name=$1} /preferred, current/ {print name; exit}')
-    RES=$(wlr-randr 2>/dev/null | awk '/preferred, current/ {print $1; exit}')
-    
-    # Defaults if detection fails
-    [ -z "$OUTPUT" ] && OUTPUT="Virtual-1"
-    [ -z "$RES" ] && RES="1280x800"
-
-    # 2. Extract height and subtract 28px for the taskbar
-    HEIGHT=$(echo "$RES" | cut -dx -f2)
-    TASKBAR_Y=$((HEIGHT - 28))
-
-    echo "Detected Height: $HEIGHT | Setting Taskbar Y: $TASKBAR_Y"
-
-    # 3. Inject values into placeholders
-    sed -e "s/__OUTPUT__/${OUTPUT}/g" \
-        -e "s/__TASKBAR_Y__/${TASKBAR_Y}/g" \
-        rc.xml > "$CONFIG_DIR/rc.xml"
-        
+    cp rc.xml "$CONFIG_DIR/rc.xml"
     chown "$REAL_USER:$REAL_USER" "$CONFIG_DIR/rc.xml"
 fi
 

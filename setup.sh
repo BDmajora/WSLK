@@ -1,15 +1,30 @@
 #!/bin/bash
 
-# Define configuration directory
-CONFIG_DIR="$HOME/.config/labwc"
+# Ensure the script is run with sudo for the installation part
+if [ "$EUID" -ne 0 ]; then
+  echo "Please run as root or with sudo to install packages."
+  exit
+fi
 
-# Create the directory if it does not exist
-echo "Creating configuration directory at $CONFIG_DIR..."
-mkdir -p "$CONFIG_DIR"
+# 1. Update and Install Labwc, Wine, and Foot
+echo "Updating package lists and installing dependencies..."
+apt update
+apt install -y labwc foot wine
 
-# Create the rc.xml configuration file
+# Switch back to the actual user for file creation
+# This ensures config files aren't owned by root
+REAL_USER=${SUDO_USER:-$USER}
+USER_HOME=$(getent passwd "$REAL_USER" | cut -d: -f6)
+CONFIG_DIR="$USER_HOME/.config/labwc"
+
+echo "Setting up configuration for user: $REAL_USER"
+
+# 2. Create the configuration directory
+sudo -u "$REAL_USER" mkdir -p "$CONFIG_DIR"
+
+# 3. Create the rc.xml configuration file
 echo "Writing rc.xml..."
-cat <<EOF > "$CONFIG_DIR/rc.xml"
+sudo -u "$REAL_USER" tee "$CONFIG_DIR/rc.xml" > /dev/null <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <labwc_config>
   <core>
@@ -31,15 +46,19 @@ cat <<EOF > "$CONFIG_DIR/rc.xml"
 </labwc_config>
 EOF
 
-# Create the autostart script to launch the terminal on boot
+# 4. Create the autostart script
 echo "Creating autostart script..."
-cat <<EOF > "$CONFIG_DIR/autostart"
+sudo -u "$REAL_USER" tee "$CONFIG_DIR/autostart" > /dev/null <<EOF
 #!/bin/bash
-# Launch foot terminal in the background
+# Start the terminal in the background
 foot &
+
+# Optional: Uncomment the line below to launch your Wine shell automatically
+# env -u DISPLAY WINEWAYLAND=1 wine explorer /desktop=shell,1280x800 &
 EOF
 
-# Make the autostart script executable
+# 5. Make the autostart script executable
 chmod +x "$CONFIG_DIR/autostart"
+chown "$REAL_USER:$REAL_USER" "$CONFIG_DIR/autostart"
 
-echo "Setup complete. You can now start labwc."
+echo "Installation and configuration complete. You can now start labwc by typing 'labwc'."

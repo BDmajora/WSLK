@@ -38,13 +38,13 @@
 
   <windowRules>
     <windowRule identifier="Shell_TrayWnd" serverDecoration="no" skipTaskbar="yes" skipPager="yes">
-      <action name="MoveTo" x="0" y="-0" />
+      <action name="MoveTo" x="0" y="__TASKBAR_Y__" />
     </windowRule>
     <windowRule identifier="explorer.exe" serverDecoration="no" skipTaskbar="yes" skipPager="yes">
-      <action name="MoveTo" x="0" y="-0" />
+      <action name="MoveTo" x="0" y="__TASKBAR_Y__" />
     </windowRule>
     <windowRule identifier="wine" serverDecoration="no" skipTaskbar="yes" skipPager="yes">
-      <action name="MoveTo" x="0" y="-0" />
+      <action name="MoveTo" x="0" y="__TASKBAR_Y__" />
     </windowRule>
   </windowRules>
 
@@ -55,7 +55,7 @@
       <focus>no</focus>
       <position force="yes">
         <x>0</x>
-        <y>-0</y>
+        <y>__TASKBAR_Y__</y>
       </position>
     </application>
 
@@ -65,7 +65,7 @@
       <focus>no</focus>
       <position force="yes">
         <x>0</x>
-        <y>-0</y>
+        <y>__TASKBAR_Y__</y>
       </position>
     </application>
 

@@ -23,11 +23,24 @@ else
 fi
 
 if [ -f "rc.xml" ]; then
-    echo "Configuring labwc..."
-    # Detect output name at install time and inject into rc.xml
+    echo "Configuring labwc with dynamic coordinates..."
+    
+    # Detect output and resolution
     OUTPUT=$(wlr-randr 2>/dev/null | awk '/^[A-Za-z]/ {name=$1} /preferred, current/ {print name; exit}')
+    RES=$(wlr-randr 2>/dev/null | awk '/preferred, current/ {print $1; exit}')
+    
     [ -z "$OUTPUT" ] && OUTPUT="Virtual-1"
-    sed "s/__OUTPUT__/${OUTPUT}/g" rc.xml > "$CONFIG_DIR/rc.xml"
+    [ -z "$RES" ] && RES="1280x800"
+
+    # Calculate Y coordinate (Screen Height - 30px taskbar)
+    HEIGHT=$(echo "$RES" | cut -dx -f2)
+    TASKBAR_Y=$((HEIGHT - 30))
+
+    # Inject BOTH the output name and the calculated Y position
+    sed -e "s/__OUTPUT__/${OUTPUT}/g" \
+        -e "s/__TASKBAR_Y__/${TASKBAR_Y}/g" \
+        rc.xml > "$CONFIG_DIR/rc.xml"
+        
     chown "$REAL_USER:$REAL_USER" "$CONFIG_DIR/rc.xml"
 fi
 

@@ -1,4 +1,6 @@
 labwc
+foot
 wine
 psmisc
 wlr-randr
+swaybg

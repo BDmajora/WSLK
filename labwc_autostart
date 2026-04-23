@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Apply Wine registry fixes now that we're inside a live Wayland session
+if [ -f "$HOME/.wslk_prefs.reg" ]; then
+    echo "Applying Wine registry fixes..." >> /tmp/wslk_autostart.log
+    WINEPREFIX="$HOME/.wine" \
+    WINEWAYLAND=1 \
+    DISPLAY="" \
+    wine regedit /s "$HOME/.wslk_prefs.reg" >> /tmp/wslk_autostart.log 2>&1
+fi
+
 # Background
 swaybg -c "#366ea5" &
 
@@ -25,12 +34,12 @@ wine explorer /desktop=shell,"$RES" >> /tmp/wslk_autostart.log 2>&1 &
 
 # Wait for taskbar window then force it to the bottom
 (
-  sleep 3
-  if command -v wlrctl &>/dev/null; then
-    wlrctl window move Shell_TrayWnd 0 "$TASKBAR_Y" 2>/dev/null && exit 0
-  fi
-  if command -v wmctrl &>/dev/null; then
-    WID=$(wmctrl -l | grep -i "tray\|taskbar\|Shell_TrayWnd" | awk '{print $1}' | head -1)
-    [ -n "$WID" ] && wmctrl -ir "$WID" -e "0,0,$TASKBAR_Y,$WIDTH,$TASKBAR_H"
-  fi
+    sleep 3
+    if command -v wlrctl &>/dev/null; then
+        wlrctl window move Shell_TrayWnd 0 "$TASKBAR_Y" 2>/dev/null && exit 0
+    fi
+    if command -v wmctrl &>/dev/null; then
+        WID=$(wmctrl -l | grep -i "tray\|taskbar\|Shell_TrayWnd" | awk '{print $1}' | head -1)
+        [ -n "$WID" ] && wmctrl -ir "$WID" -e "0,0,$TASKBAR_Y,$WIDTH,$TASKBAR_H"
+    fi
 ) &

@@ -14,9 +14,11 @@ CONFIG_DIR="$USER_HOME/.config/labwc"
 
 sudo -u "$REAL_USER" mkdir -p "$CONFIG_DIR"
 
+# Copy reg file for autostart to apply inside the live session
 if [ -f "wslk_prefs.reg" ]; then
-    echo "Applying Wine registry fixes..."
-    sudo -u "$REAL_USER" WINEPREFIX="$USER_HOME/.wine" wine regedit /s wslk_prefs.reg
+    echo "Staging registry file..."
+    cp wslk_prefs.reg "$USER_HOME/.wslk_prefs.reg"
+    chown "$REAL_USER:$REAL_USER" "$USER_HOME/.wslk_prefs.reg"
 else
     echo "Warning: wslk_prefs.reg not found. Skipping."
 fi
@@ -27,7 +29,6 @@ if [ -f "rc.xml" ]; then
     chown "$REAL_USER:$REAL_USER" "$CONFIG_DIR/rc.xml"
 fi
 
-# Deploy autostart from source file instead of heredoc
 if [ -f "labwc_autostart" ]; then
     echo "Deploying autostart..."
     cp labwc_autostart "$CONFIG_DIR/autostart"

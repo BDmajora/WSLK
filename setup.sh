@@ -43,10 +43,10 @@ sudo -u "$REAL_USER" tee "$CONFIG_DIR/autostart" > /dev/null <<'EOF'
 RES=$(wlr-randr | grep -m 1 'current' | awk '{print $1}')
 
 # Launch Wine Desktop scaled to the detected resolution
-# No terminal spawn, just the native shell
 if [ -n "$RES" ]; then
     env -u DISPLAY WINEWAYLAND=1 wine explorer /desktop=shell,"$RES" &
 else
+    # Fallback if detection fails
     env -u DISPLAY WINEWAYLAND=1 wine explorer /desktop=shell,1280x800 &
 fi
 EOF

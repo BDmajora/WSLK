@@ -14,6 +14,8 @@
     </keybind>
   </keyboard>
   <windowRules>
-    <windowRule identifier="wine*" maximize="yes" serverDecoration="no" />
+    <windowRule identifier="wine*" maximize="yes" serverDecoration="no" borderless="yes">
+      <action name="MoveTo" x="0" y="0" />
+    </windowRule>
   </windowRules>
 </labwc_config>

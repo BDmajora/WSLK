@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<openbox_config xmlns="http://openbox.org/3.4/rc">
+<openbox_config xmlns="http://openbox.org/3.4/rc"
+                xmlns:xi="http://www.w3.org/2001/XInclude">
+
   <outputs>
     <output>
       <name>__OUTPUT__</name>
@@ -7,25 +9,50 @@
     </output>
   </outputs>
 
+  <focus>
+    <followMouse>no</followMouse>
+    <focusLast>yes</focusLast>
+    <underMouse>no</underMouse>
+    <focusDelay>200</focusDelay>
+  </focus>
+
   <desktops>
     <number>1</number>
+    <firstdesk>1</firstdesk>
     <names><name>WSLK</name></names>
   </desktops>
+
+  <keyboard>
+    <keybind key="W-t">
+      <action name="Execute"><command>foot</command></action>
+    </keybind>
+    <keybind key="W-S-q">
+      <action name="Exit"/>
+    </keybind>
+  </keyboard>
+
+  <mouse>
+    <dragThreshold>1</dragThreshold>
+    <doubleClickTime>500</doubleClickTime>
+  </mouse>
 
   <windowRules>
     <windowRule identifier="Shell_TrayWnd" serverDecoration="no" skipTaskbar="yes" skipPager="yes">
       <action name="MoveTo" x="0" y="__TASKBAR_Y__" />
     </windowRule>
-    
-    <windowRule identifier="explorer.exe" serverDecoration="no" skipTaskbar="yes" skipPager="yes" />
-    
-    <windowRule identifier="wine" serverDecoration="no" />
+    <windowRule identifier="explorer.exe" serverDecoration="no" skipTaskbar="yes" skipPager="yes">
+      <action name="MoveTo" x="0" y="__TASKBAR_Y__" />
+    </windowRule>
+    <windowRule identifier="wine" serverDecoration="no" skipTaskbar="yes" skipPager="yes">
+      <action name="MoveTo" x="0" y="__TASKBAR_Y__" />
+    </windowRule>
   </windowRules>
 
   <applications>
     <application class="Shell_TrayWnd">
       <decor>no</decor>
       <layer>above</layer>
+      <focus>no</focus>
       <position force="yes">
         <x>0</x>
         <y>__TASKBAR_Y__</y>
@@ -33,9 +60,11 @@
     </application>
     <application class="explorer.exe">
       <decor>no</decor>
+      <layer>above</layer>
+      <focus>no</focus>
       <position force="yes">
         <x>0</x>
-        <y>0</y>
+        <y>__TASKBAR_Y__</y>
       </position>
     </application>
     <application class="*">

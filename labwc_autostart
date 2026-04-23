@@ -1,32 +1,28 @@
 #!/bin/bash
 
-# Apply Wine registry fixes now that we're inside a live Wayland session
+# Force correct output resolution - QEMU doubles the height
+wlr-randr --output Virtual-1 --mode 1280x800 >> /tmp/wslk_autostart.log 2>&1
+
+# Apply Wine registry fixes
 if [ -f "$HOME/.wslk_prefs.reg" ]; then
-    echo "Applying Wine registry fixes..." >> /tmp/wslk_autostart.log
     WINEPREFIX="$HOME/.wine" \
     WINEWAYLAND=1 \
     DISPLAY="" \
     wine regedit /s "$HOME/.wslk_prefs.reg" >> /tmp/wslk_autostart.log 2>&1
 fi
 
-# Background
 swaybg -c "#366ea5" &
 
 sleep 1
 
-# Get resolution
-RES=$(wlr-randr 2>/dev/null | awk '/[0-9]+x[0-9]+/ && /current/ {print $1; exit}')
-[ -z "$RES" ] && RES=$(wlr-randr 2>/dev/null | awk 'match($0, /[0-9]+x[0-9]+/) {print substr($0, RSTART, RLENGTH); exit}')
-[ -z "$RES" ] && RES="1280x800"
-
-WIDTH=$(echo "$RES" | cut -dx -f1)
-HEIGHT=$(echo "$RES" | cut -dx -f2)
+RES="1280x800"
+WIDTH=1280
+HEIGHT=800
 TASKBAR_H=30
 TASKBAR_Y=$((HEIGHT - TASKBAR_H))
 
 echo "Resolution: ${WIDTH}x${HEIGHT}, taskbar Y: $TASKBAR_Y" >> /tmp/wslk_autostart.log
 
-# Launch Wine shell
 WINEPREFIX="$HOME/.wine" \
 WINEWAYLAND=1 \
 DISPLAY="" \

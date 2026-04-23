@@ -37,15 +37,28 @@
   </mouse>
 
   <windowRules>
-    <windowRule identifier="explorer.exe"
-                serverDecoration="no"
-                skipTaskbar="yes"
-                skipPager="yes"
-                fixedPosition="yes">
+    <windowRule identifier="Shell_TrayWnd" serverDecoration="no" skipTaskbar="yes" skipPager="yes">
+      <action name="MoveTo" x="0" y="-0" />
+    </windowRule>
+    <windowRule identifier="explorer.exe" serverDecoration="no" skipTaskbar="yes" skipPager="yes">
+      <action name="MoveTo" x="0" y="-0" />
+    </windowRule>
+    <windowRule identifier="wine" serverDecoration="no" skipTaskbar="yes" skipPager="yes">
+      <action name="MoveTo" x="0" y="-0" />
     </windowRule>
   </windowRules>
 
   <applications>
+    <application class="Shell_TrayWnd">
+      <decor>no</decor>
+      <layer>above</layer>
+      <focus>no</focus>
+      <position force="yes">
+        <x>0</x>
+        <y>-0</y>
+      </position>
+    </application>
+
     <application class="explorer.exe">
       <decor>no</decor>
       <layer>above</layer>
@@ -55,7 +68,7 @@
         <y>-0</y>
       </position>
     </application>
-    
+
     <application class="*">
       <decor>no</decor>
     </application>

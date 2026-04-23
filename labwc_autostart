@@ -7,6 +7,11 @@ RES=$(wlr-randr 2>/dev/null | awk '/preferred, current/ {print $1; exit}')
 [ -z "$OUTPUT" ] && OUTPUT="Virtual-1"
 [ -z "$RES" ] && RES="1280x800"
 
+WIDTH=$(echo "$RES" | cut -dx -f1)
+HEIGHT=$(echo "$RES" | cut -dx -f2)
+TASKBAR_H=30
+TASKBAR_Y=$((HEIGHT - TASKBAR_H))
+
 # Force the mode so QEMU doesn't scale/double
 wlr-randr --output "$OUTPUT" --mode "$RES" >> /tmp/wslk_autostart.log 2>&1
 
@@ -22,7 +27,7 @@ swaybg -c "#366ea5" &
 
 sleep 1
 
-echo "Output: $OUTPUT, Resolution: $RES" >> /tmp/wslk_autostart.log
+echo "Output: $OUTPUT, Resolution: ${WIDTH}x${HEIGHT}, taskbar Y: $TASKBAR_Y" >> /tmp/wslk_autostart.log
 
 WINEPREFIX="$HOME/.wine" \
 WINEWAYLAND=1 \

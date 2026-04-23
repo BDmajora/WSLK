@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openbox_config xmlns="http://openbox.org/3.4/rc"
                 xmlns:xi="http://www.w3.org/2001/XInclude">
-  <resistance>
-    <strength>10</strength>
-    <screen_edge_strength>20</screen_edge_strength>
-  </resistance>
 
   <focus>
     <followMouse>no</followMouse>
@@ -12,11 +8,6 @@
     <underMouse>no</underMouse>
     <focusDelay>200</focusDelay>
   </focus>
-
-  <theme>
-    <name>Clearlooks</name>
-    <titleLayout>NLIMC</titleLayout>
-  </theme>
 
   <desktops>
     <number>1</number>
@@ -36,21 +27,30 @@
   <mouse>
     <dragThreshold>1</dragThreshold>
     <doubleClickTime>500</doubleClickTime>
-    <screenEdgeWarpTime>400</screenEdgeWarpTime>
   </mouse>
 
+  <!-- labwc native window rules - fires on map -->
+  <windowRules>
+    <windowRule identifier="Shell_TrayWnd"
+                serverDecoration="no"
+                skipTaskbar="yes"
+                skipPager="yes"
+                fixedPosition="yes">
+      <action name="MoveTo" x="0" y="-30" />
+    </windowRule>
+  </windowRules>
+
   <applications>
-    <!-- Pin Wine Explorer shell (taskbar) to bottom, no decorations -->
     <application class="explorer.exe" role="Shell_TrayWnd">
       <decor>no</decor>
-      <maximized>no</maximized>
-      <fullscreen>no</fullscreen>
       <layer>above</layer>
       <focus>no</focus>
+      <position force="yes">
+        <x>0</x>
+        <y>-30</y>
+      </position>
     </application>
-
-    <!-- Wine desktop/program windows: fullscreen, no chrome -->
-    <application class="*" name="*">
+    <application class="*">
       <decor>no</decor>
     </application>
   </applications>

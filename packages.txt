@@ -4,3 +4,4 @@ wine
 psmisc
 wlr-randr
 swaybg
+wlrctl

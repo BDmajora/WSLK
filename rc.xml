@@ -2,6 +2,13 @@
 <openbox_config xmlns="http://openbox.org/3.4/rc"
                 xmlns:xi="http://www.w3.org/2001/XInclude">
 
+  <outputs>
+    <output>
+      <name>__OUTPUT__</name>
+      <mode>preferred</mode>
+    </output>
+  </outputs>
+
   <focus>
     <followMouse>no</followMouse>
     <focusLast>yes</focusLast>
@@ -29,7 +36,6 @@
     <doubleClickTime>500</doubleClickTime>
   </mouse>
 
-  <!-- labwc native window rules - fires on map -->
   <windowRules>
     <windowRule identifier="Shell_TrayWnd"
                 serverDecoration="no"

@@ -14,7 +14,6 @@ CONFIG_DIR="$USER_HOME/.config/labwc"
 
 sudo -u "$REAL_USER" mkdir -p "$CONFIG_DIR"
 
-# Copy reg file for autostart to apply inside the live session
 if [ -f "wslk_prefs.reg" ]; then
     echo "Staging registry file..."
     cp wslk_prefs.reg "$USER_HOME/.wslk_prefs.reg"
@@ -25,7 +24,10 @@ fi
 
 if [ -f "rc.xml" ]; then
     echo "Configuring labwc..."
-    cp rc.xml "$CONFIG_DIR/rc.xml"
+    # Detect output name at install time and inject into rc.xml
+    OUTPUT=$(wlr-randr 2>/dev/null | awk '/^[A-Za-z]/ {name=$1} /preferred, current/ {print name; exit}')
+    [ -z "$OUTPUT" ] && OUTPUT="Virtual-1"
+    sed "s/__OUTPUT__/${OUTPUT}/g" rc.xml > "$CONFIG_DIR/rc.xml"
     chown "$REAL_USER:$REAL_USER" "$CONFIG_DIR/rc.xml"
 fi
 
@@ -35,7 +37,7 @@ if [ -f "labwc_autostart" ]; then
     chmod +x "$CONFIG_DIR/autostart"
     chown "$REAL_USER:$REAL_USER" "$CONFIG_DIR/autostart"
 else
-    echo "Warning: labwc_autostart not found. Skipping autostart deploy."
+    echo "Warning: labwc_autostart not found. Skipping."
 fi
 
 echo "WSLK setup complete. Launch with: labwc"

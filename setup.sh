@@ -5,8 +5,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 echo "Installing dependencies..."
-apt update
-apt install -y wlr-randr sed swaybg wine
+apt update && apt install -y wlr-randr sed swaybg wine
 
 REAL_USER=${SUDO_USER:-$USER}
 USER_HOME=$(getent passwd "$REAL_USER" | cut -d: -f6)
@@ -14,13 +13,10 @@ CONFIG_DIR="$USER_HOME/.config/labwc"
 
 sudo -u "$REAL_USER" mkdir -p "$CONFIG_DIR"
 
-# Stage Registry
-if [ -f "wslk_prefs.reg" ]; then
-    cp wslk_prefs.reg "$USER_HOME/.wslk_prefs.reg"
-    chown "$REAL_USER:$REAL_USER" "$USER_HOME/.wslk_prefs.reg"
-fi
+# Deploy Registry
+[ -f "wslk_prefs.reg" ] && cp wslk_prefs.reg "$USER_HOME/.wslk_prefs.reg"
 
-# Deploy rc.xml Template (No math here!)
+# Deploy rc.xml Template (No math allowed here!)
 if [ -f "rc.xml" ]; then
     cp rc.xml "$CONFIG_DIR/rc.xml"
     chown "$REAL_USER:$REAL_USER" "$CONFIG_DIR/rc.xml"
@@ -33,4 +29,5 @@ if [ -f "labwc_autostart" ]; then
     chown "$REAL_USER:$REAL_USER" "$CONFIG_DIR/autostart"
 fi
 
-echo "WSLK setup complete. Launch with: labwc"
+chown "$REAL_USER:$REAL_USER" "$USER_HOME/.wslk_prefs.reg"
+echo "WSLK setup complete."

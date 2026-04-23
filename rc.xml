@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<labwc_config>
+  <core>
+    <decoration>none</decoration>
+    <gap>0</gap>
+  </core>
+  <keyboard>
+    <default />
+    <keybind key="W-t">
+      <action name="Execute" command="foot" />
+    </keybind>
+    <keybind key="W-S-q">
+      <action name="Exit" />
+    </keybind>
+  </keyboard>
+  <windowRules>
+    <windowRule identifier="wine*" maximize="yes" serverDecoration="no" />
+  </windowRules>
+</labwc_config>

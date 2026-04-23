@@ -1,0 +1,4 @@
+labwc
+wine
+psmisc
+wlr-randr

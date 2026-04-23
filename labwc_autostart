@@ -1,7 +1,19 @@
 #!/bin/bash
 
-# Force correct output resolution - QEMU doubles the height
-wlr-randr --output Virtual-1 --mode 1280x800 >> /tmp/wslk_autostart.log 2>&1
+# Get output name and current resolution dynamically
+OUTPUT=$(wlr-randr 2>/dev/null | awk '/^[A-Za-z]/ {name=$1} /preferred, current/ {print name; exit}')
+RES=$(wlr-randr 2>/dev/null | awk '/preferred, current/ {print $1; exit}')
+
+[ -z "$OUTPUT" ] && OUTPUT="Virtual-1"
+[ -z "$RES" ] && RES="1280x800"
+
+WIDTH=$(echo "$RES" | cut -dx -f1)
+HEIGHT=$(echo "$RES" | cut -dx -f2)
+TASKBAR_H=30
+TASKBAR_Y=$((HEIGHT - TASKBAR_H))
+
+# Force the mode so QEMU doesn't scale/double
+wlr-randr --output "$OUTPUT" --mode "$RES" >> /tmp/wslk_autostart.log 2>&1
 
 # Apply Wine registry fixes
 if [ -f "$HOME/.wslk_prefs.reg" ]; then
@@ -15,27 +27,9 @@ swaybg -c "#366ea5" &
 
 sleep 1
 
-RES="1280x800"
-WIDTH=1280
-HEIGHT=800
-TASKBAR_H=30
-TASKBAR_Y=$((HEIGHT - TASKBAR_H))
-
-echo "Resolution: ${WIDTH}x${HEIGHT}, taskbar Y: $TASKBAR_Y" >> /tmp/wslk_autostart.log
+echo "Output: $OUTPUT, Resolution: ${WIDTH}x${HEIGHT}, taskbar Y: $TASKBAR_Y" >> /tmp/wslk_autostart.log
 
 WINEPREFIX="$HOME/.wine" \
 WINEWAYLAND=1 \
 DISPLAY="" \
 wine explorer /desktop=shell,"$RES" >> /tmp/wslk_autostart.log 2>&1 &
-
-# Wait for taskbar window then force it to the bottom
-(
-    sleep 3
-    if command -v wlrctl &>/dev/null; then
-        wlrctl window move Shell_TrayWnd 0 "$TASKBAR_Y" 2>/dev/null && exit 0
-    fi
-    if command -v wmctrl &>/dev/null; then
-        WID=$(wmctrl -l | grep -i "tray\|taskbar\|Shell_TrayWnd" | awk '{print $1}' | head -1)
-        [ -n "$WID" ] && wmctrl -ir "$WID" -e "0,0,$TASKBAR_Y,$WIDTH,$TASKBAR_H"
-    fi
-) &

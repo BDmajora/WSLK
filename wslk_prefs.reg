@@ -7,3 +7,12 @@ Windows Registry Editor Version 5.00
 "Wallpaper"=""
 "WallpaperStyle"="0"
 "TileWallpaper"="0"
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon]
+"Shell"="explorer.exe"
+
+[HKEY_CURRENT_USER\Software\Wine\X11 Driver]
+"DPI"="96"
+
+[HKEY_CURRENT_USER\Software\Wine\Wayland Driver]
+"UseXDGOutput"="Y"

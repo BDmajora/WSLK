@@ -1,21 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<labwc_config>
-  <core>
-    <decoration>none</decoration>
-    <gap>0</gap>
-  </core>
+<openbox_config xmlns="http://openbox.org/3.4/rc"
+                xmlns:xi="http://www.w3.org/2001/XInclude">
+  <resistance>
+    <strength>10</strength>
+    <screen_edge_strength>20</screen_edge_strength>
+  </resistance>
+
+  <focus>
+    <followMouse>no</followMouse>
+    <focusLast>yes</focusLast>
+    <underMouse>no</underMouse>
+    <focusDelay>200</focusDelay>
+  </focus>
+
+  <theme>
+    <name>Clearlooks</name>
+    <titleLayout>NLIMC</titleLayout>
+  </theme>
+
+  <desktops>
+    <number>1</number>
+    <firstdesk>1</firstdesk>
+    <names><name>WSLK</name></names>
+  </desktops>
+
   <keyboard>
-    <default />
     <keybind key="W-t">
-      <action name="Execute" command="foot" />
+      <action name="Execute"><command>foot</command></action>
     </keybind>
     <keybind key="W-S-q">
-      <action name="Exit" />
+      <action name="Exit"/>
     </keybind>
   </keyboard>
-  <windowRules>
-    <windowRule identifier="wine*" maximize="yes" serverDecoration="no" borderless="yes">
-      <action name="MoveTo" x="0" y="0" />
-    </windowRule>
-  </windowRules>
-</labwc_config>
+
+  <mouse>
+    <dragThreshold>1</dragThreshold>
+    <doubleClickTime>500</doubleClickTime>
+    <screenEdgeWarpTime>400</screenEdgeWarpTime>
+  </mouse>
+
+  <applications>
+    <!-- Pin Wine Explorer shell (taskbar) to bottom, no decorations -->
+    <application class="explorer.exe" role="Shell_TrayWnd">
+      <decor>no</decor>
+      <maximized>no</maximized>
+      <fullscreen>no</fullscreen>
+      <layer>above</layer>
+      <focus>no</focus>
+    </application>
+
+    <!-- Wine desktop/program windows: fullscreen, no chrome -->
+    <application class="*" name="*">
+      <decor>no</decor>
+    </application>
+  </applications>
+
+</openbox_config>

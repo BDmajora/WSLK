@@ -1,58 +1,57 @@
 #!/bin/bash
-
 if [ "$EUID" -ne 0 ]; then
-  echo "Please run with sudo."
-  exit
+    echo "Please run with sudo."
+    exit 1
 fi
 
-# 1. Install dependencies
 echo "Installing dependencies..."
 apt update
-# Ensure packages.txt includes: labwc wine psmisc wlr-randr
 xargs -a packages.txt apt install -y
 
 REAL_USER=${SUDO_USER:-$USER}
 USER_HOME=$(getent passwd "$REAL_USER" | cut -d: -f6)
 CONFIG_DIR="$USER_HOME/.config/labwc"
 
-# 2. Setup Directories
 sudo -u "$REAL_USER" mkdir -p "$CONFIG_DIR"
 
-# 3. Apply Registry Fixes (The Native Way)
 if [ -f "wslk_prefs.reg" ]; then
     echo "Applying Wine registry fixes..."
-    # Run as the real user to target their default Wine prefix
-    sudo -u "$REAL_USER" wine regedit /s wslk_prefs.reg
+    sudo -u "$REAL_USER" WINEPREFIX="$USER_HOME/.wine" wine regedit /s wslk_prefs.reg
 else
-    echo "Warning: wslk_prefs.reg not found. Skipping registry fix."
+    echo "Warning: wslk_prefs.reg not found. Skipping."
 fi
 
-# 4. Apply rc.xml
 if [ -f "rc.xml" ]; then
     echo "Configuring labwc..."
     cp rc.xml "$CONFIG_DIR/rc.xml"
     chown "$REAL_USER:$REAL_USER" "$CONFIG_DIR/rc.xml"
 fi
 
-# 5. Create DYNAMIC Autostart
-echo "Creating dynamic autostart script..."
+echo "Creating autostart..."
 sudo -u "$REAL_USER" tee "$CONFIG_DIR/autostart" > /dev/null <<'EOF'
 #!/bin/bash
 
-# Get the resolution of the first active monitor
-RES=$(wlr-randr | grep -m 1 'current' | awk '{print $1}')
+# Set solid background color (no wallpaper needed)
+swaybg -c "#366ea5" &
 
-# Launch Wine Desktop scaled to the detected resolution
-if [ -n "$RES" ]; then
-    env -u DISPLAY WINEWAYLAND=1 wine explorer /desktop=shell,"$RES" &
-else
-    # Fallback if detection fails
-    env -u DISPLAY WINEWAYLAND=1 wine explorer /desktop=shell,1280x800 &
-fi
+# Wait for Wayland compositor to be fully ready
+sleep 1
+
+# Get resolution robustly
+RES=$(wlr-randr 2>/dev/null | awk '/[0-9]+x[0-9]+/ && /current/ {print $1; exit}')
+[ -z "$RES" ] && RES=$(wlr-randr 2>/dev/null | awk 'match($0, /[0-9]+x[0-9]+/) {print substr($0, RSTART, RLENGTH); exit}')
+[ -z "$RES" ] && RES="1280x800"
+
+echo "Detected resolution: $RES" >> /tmp/wslk_autostart.log
+
+# Launch Wine shell
+WINEPREFIX="$HOME/.wine" \
+WINEWAYLAND=1 \
+DISPLAY="" \
+wine explorer /desktop=shell,"$RES" >> /tmp/wslk_autostart.log 2>&1 &
 EOF
 
-# 6. Permissions
 chmod +x "$CONFIG_DIR/autostart"
 chown "$REAL_USER:$REAL_USER" "$CONFIG_DIR/autostart"
 
-echo "WSLK setup complete. Registry applied. Launch with 'labwc'."
+echo "WSLK setup complete. Launch with: labwc"

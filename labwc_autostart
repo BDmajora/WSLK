@@ -13,7 +13,7 @@ HEIGHT=$(echo "$RES" | cut -dx -f2)
 
 # 2. DYNAMIC MATH
 # 30px matches the standard Wine taskbar height precisely.
-TASKBAR_Y=$((HEIGHT - 10))
+TASKBAR_Y=$((HEIGHT - 20))
 
 # 3. RUNTIME INJECTION
 # We update your rc.xml with the real hardware numbers at every boot.
